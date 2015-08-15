@@ -16,6 +16,9 @@ public class DeathListener implements Listener {
     }
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent e) {
+        if (e.getEntity() instanceof Player) {
+            md.givePlayerHead(e.getEntity().getKiller(), e.getEntity().getName());
+        }
         if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent && e.getEntity().getKiller() instanceof Player) {
             Player killer = e.getEntity().getKiller();
             md.entityDeath(e, killer);
