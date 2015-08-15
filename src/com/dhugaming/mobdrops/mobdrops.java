@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class mobdrops extends JavaPlugin implements Listener {
     HashMap<String, String> eggID = new HashMap();
     String rmdPrefix = ChatColor.DARK_GRAY + "[RMD]: " + ChatColor.AQUA;
-    String version = "0.0.5";
+    String version = "0.0.9";
     public void populateIDs() {
         eggID.put("Creeper", "50");
         eggID.put("Skeleton", "51");
@@ -72,24 +72,56 @@ public class mobdrops extends JavaPlugin implements Listener {
         }
         return false;
     }
-    public void entityDeath(EntityDeathEvent event, Player killer) {
-        if (dropHeadChance()) {
-            String playerName = killer.getDisplayName();
-            int ind = playerName.lastIndexOf("]");
-            playerName = playerName.substring(ind + 1, playerName.length() - 2);
-            killer.sendMessage(rmdPrefix + "You cut off the " + event.getEntity().getName().toLowerCase() + "'s head!");
-            String command = "give " + playerName + " 397:3 1 player:MHF_" + event.getEntity().getName();
+    public String parseName(String name) {
+        int i = name.lastIndexOf("]");
+        name = name.substring(i + 1, name.length() - 2);
+        return name;
+    }
+    public void givePlayerHead(Player toP, String from) {
+        String to = toP.getDisplayName();
+        if (percentChance(20)) {
+            to = parseName(to);
+            from = parseName(from);
+            String command = "give " + to + " 397:3 1 {SkullOwner:" + from + "}";
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-        }
-        if (dropEggChance()) {
-            String id = eggID.get(event.getEntity().getName());
-            String playerName = killer.getDisplayName();
-            int ind = playerName.lastIndexOf("]");
-            playerName = playerName.substring(ind + 1, playerName.length() - 2);
-            killer.sendMessage(rmdPrefix + "You hit the " + event.getEntity().getName().toLowerCase() + " so hard, it dropped an egg.");
-            String command = "give " + playerName + " 383:" + id + " 1";
             getLogger().info(command);
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            toP.sendMessage(rmdPrefix + "You cut off " + to + "'s head!");
+            getLogger().info(to);
+        }
+    }
+    public void entityDeath(EntityDeathEvent event, Player killer) {
+        if (!(event.getEntity() instanceof Player)) {
+            if (dropHeadChance()) {
+                String eName = event.getEntity().getName();
+                if (eName.equals("Zombie Pigman")) {
+                    eName = "PigZombie";
+                }
+                if (eName.equals("Cave Spider")) {
+                    eName = "CaveSpider";
+                }
+                if (eName.equals("Magma Cube")) {
+                    eName = "LavaSlime";
+                }
+                if (eName.equals("Mooshroom")) {
+                    eName = "MushroomCow";
+                }
+                String playerName = killer.getDisplayName();
+                int ind = playerName.lastIndexOf("]");
+                playerName = playerName.substring(ind + 1, playerName.length() - 2);
+                killer.sendMessage(rmdPrefix + "You cut off the " + event.getEntity().getName().toLowerCase() + "'s head!");
+                String command = "give " + playerName + " 397:3 1 player:MHF_" + eName;
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+            if (dropEggChance()) {
+                String id = eggID.get(event.getEntity().getName());
+                String playerName = killer.getDisplayName();
+                int ind = playerName.lastIndexOf("]");
+                playerName = playerName.substring(ind + 1, playerName.length() - 2);
+                killer.sendMessage(rmdPrefix + "You hit the " + event.getEntity().getName().toLowerCase() + " so hard, it dropped an egg.");
+                String command = "give " + playerName + " 383:" + id + " 1";
+                getLogger().info(command);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
         }
     }
     @Override
