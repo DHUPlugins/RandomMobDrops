@@ -74,7 +74,7 @@ public class mobdrops extends JavaPlugin implements Listener {
     }
     public String parseName(String name) {
         int i = name.lastIndexOf("]");
-        name = name.substring(i + 1, name.length() - 2);
+        name = name.substring(i + 1);
         return name;
     }
     public void givePlayerHead(Player toP, String from) {
