@@ -1,7 +1,7 @@
 name: RandomMobDrops
 author: DHU Gaming
 main: com.dhugaming.mobdrops.mobdrops
-version: 0.0.9
+version: 0.1.0
 commands:
   rmd:
     description: View RMD version.
